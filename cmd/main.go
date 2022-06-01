@@ -16,6 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 	logger.InitLogger()
+	
 	apphttp := server.NewApp()
 	apphttp.Run(viper.GetString("app.http_port"))
 

@@ -9,6 +9,6 @@ app:
     login: ""
     pass: ""
     host: ""
-    port: 
+    port: ""
     name: ""
     args: "parseTime=true&multiStatements=true"  

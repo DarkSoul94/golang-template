@@ -7,7 +7,7 @@ type repoMock struct {
 }
 
 // NewRepo ...
-func NewRepo() app.Repository {
+func NewMockRepo() app.Repository {
 	return &repoMock{}
 }
 

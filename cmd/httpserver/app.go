@@ -9,10 +9,12 @@ import (
 
 	"github.com/DarkSoul94/golang-template/app"
 	apphttp "github.com/DarkSoul94/golang-template/app/delivery/http"
-	apprepo "github.com/DarkSoul94/golang-template/app/repo/mock"
+	apprepo "github.com/DarkSoul94/golang-template/app/repo/mysql"
 	appusecase "github.com/DarkSoul94/golang-template/app/usecase"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+
+	"github.com/DarkSoul94/dbconnectors/mysql"
 )
 
 // App ...
@@ -24,7 +26,20 @@ type App struct {
 
 // NewApp ...
 func NewApp() *App {
-	repo := apprepo.NewRepo()
+	db, err := mysql.InitMysqlDB(
+		viper.GetString("app.db.login"),
+		viper.GetString("app.db.pass"),
+		viper.GetString("app.db.host"),
+		viper.GetString("app.db.port"),
+		viper.GetString("app.db.name"),
+		viper.GetString("app.db.args"),
+		"file://migrations",
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	repo := apprepo.NewMySQLRepo(db)
 	uc := appusecase.NewUsecase(repo)
 	return &App{
 		appUC:   uc,
