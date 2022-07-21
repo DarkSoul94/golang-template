@@ -11,6 +11,7 @@ import (
 	apphttp "github.com/DarkSoul94/golang-template/app/delivery/http"
 	apprepo "github.com/DarkSoul94/golang-template/app/repo/mysql"
 	appusecase "github.com/DarkSoul94/golang-template/app/usecase"
+	"github.com/DarkSoul94/golang-template/config"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 
@@ -25,14 +26,14 @@ type App struct {
 }
 
 // NewApp ...
-func NewApp() *App {
+func NewApp(conf config.Config) *App {
 	db, err := mysql.InitMysqlDB(
-		viper.GetString("app.db.login"),
-		viper.GetString("app.db.pass"),
-		viper.GetString("app.db.host"),
-		viper.GetString("app.db.port"),
-		viper.GetString("app.db.name"),
-		viper.GetString("app.db.args"),
+		conf.DBLogin,
+		conf.DBPass,
+		conf.DbHost,
+		conf.DbPort,
+		conf.DbName,
+		conf.DBArgs,
 		"file://migrations",
 	)
 	if err != nil {
@@ -48,7 +49,7 @@ func NewApp() *App {
 }
 
 // Run run application
-func (a *App) Run(port string) {
+func (a *App) Run(conf config.Config) {
 	defer a.appRepo.Close()
 
 	router := gin.New()
@@ -62,7 +63,7 @@ func (a *App) Run(port string) {
 	apphttp.RegisterHTTPEndpoints(apiRouter, a.appUC)
 
 	a.httpServer = &http.Server{
-		Addr:           ":" + port,
+		Addr:           ":" + conf.HTTPport,
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

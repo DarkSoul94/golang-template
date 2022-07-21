@@ -1,24 +1,28 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"os/signal"
 
 	server "github.com/DarkSoul94/golang-template/cmd/httpserver"
-	"github.com/DarkSoul94/golang-template/pkg/config"
+	"github.com/DarkSoul94/golang-template/config"
 	"github.com/DarkSoul94/golang-template/pkg/logger"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	if err := config.InitConfig(); err != nil {
-		log.Fatal(err)
-	}
-	logger.InitLogger()
-	
-	apphttp := server.NewApp()
-	apphttp.Run(viper.GetString("app.http_port"))
+	conf := config.InitConfig()
+	logger.InitLogger(conf)
+
+	apphttp := server.NewApp(conf)
+	go apphttp.Run(conf)
+
+	fmt.Println(
+		fmt.Sprintf(
+			"Service %s is running",
+			conf.AppName,
+		),
+	)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, os.Interrupt)
@@ -26,4 +30,11 @@ func main() {
 	<-quit
 
 	apphttp.Stop()
+
+	fmt.Println(
+		fmt.Sprintf(
+			"Service %s is stopped",
+			conf.AppName,
+		),
+	)
 }

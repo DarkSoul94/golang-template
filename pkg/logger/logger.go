@@ -4,15 +4,15 @@ import (
 	"os"
 	"path"
 
+	"github.com/DarkSoul94/golang-template/config"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 // InitLogger ...
-func InitLogger() {
+func InitLogger(conf config.Config) {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
-	os.Mkdir(viper.GetString("app.log.dir"), 0755)
-	filepath := path.Join(viper.GetString("app.log.dir"), viper.GetString("app.log.file"))
+	os.Mkdir(conf.LogDir, 0755)
+	filepath := path.Join(conf.LogDir, conf.LogFile)
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0755)
 	if err != nil {
 		panic(err)
