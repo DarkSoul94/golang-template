@@ -1,4 +1,4 @@
-FROM golang:1.17.0 as builder
+FROM golang:1.21.0 as builder
 WORKDIR /usr/local/bin
 COPY . .
 RUN go mod tidy
